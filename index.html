@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo Virtual - Embutidos Manwil</title>
+  <style>
+    :root {
+      --manwil-red: #d91424;
+      --manwil-dark-red: #9e0c19;
+      --manwil-yellow: #fdbb11;
+      --card-bg: rgba(255, 255, 255, 0.97);
+      --text-dark: #222222;
+
+      /* ========================================================
+         👉 1. CAMBIA AQUÍ EL ENLACE DIRECTO DE TU FONDO DE MADERA
+         ======================================================== */
+      --wood-url: url('https://images.unsplash.com/photo-1546484396-fb3fc6f95f98?q=80&w=1200&auto=format&fit=crop');
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    }
+    
+    body {
+      background-color: #3e2723;
+      background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.45)), var(--wood-url);
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Cabecera */
+    header {
+      background: linear-gradient(180deg, var(--manwil-red) 0%, var(--manwil-dark-red) 100%);
+      border-bottom: 4px solid var(--manwil-yellow);
+      padding: 0.6rem 1.5rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      height: 52px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .brand-title {
+      color: white;
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    /* Barra de Categorías Transparente (Sin franja blanca) */
+    .categories-bar {
+      background: transparent;
+      padding: 0.9rem 1rem 0.5rem 1rem;
+      position: sticky;
+      top: 68px;
+      z-index: 30;
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .cat-btn {
+      white-space: nowrap;
+      background: rgba(30, 10, 10, 0.78);
+      color: #ffffff;
+      border: 1.5px solid var(--manwil-yellow);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      transition: all 0.2s ease;
+    }
+
+    .cat-btn.active, .cat-btn:hover {
+      background: var(--manwil-red);
+      color: #ffffff;
+      border-color: #ffffff;
+      transform: scale(1.04);
+    }
+
+    /* Botón Flotante Permanente del Carrito */
+    .floating-cart-btn {
+      position: fixed;
+      bottom: 85px;
+      right: 20px;
+      z-index: 90;
+      background: var(--manwil-yellow);
+      color: #7a0c14;
+      border: 3px solid white;
+      padding: 0.8rem 1.4rem;
+      border-radius: 50px;
+      font-weight: 900;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.2s ease;
+    }
+    .floating-cart-btn:hover { 
+      transform: scale(1.08); 
+    }
+
+    .cart-badge {
+      background: var(--manwil-red);
+      color: white;
+      border-radius: 50%;
+      padding: 2px 7px;
+      font-size: 0.85rem;
+    }
+
+    /* Contenedor Principal */
+    .container {
+      max-width: 1200px;
+      margin: 1rem auto;
+      padding: 0 1rem;
+      flex: 1;
+      width: 100%;
+    }
+
+    #loader {
+      background: rgba(255, 255, 255, 0.92);
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: bold;
+      color: var(--manwil-dark-red);
+      max-width: 450px;
+      margin: 3rem auto;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* Tarjetas de Producto */
+    .card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.7);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease;
+    }
+    .card:hover { 
+      transform: translateY(-4px); 
+    }
+
+    .card img {
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      background: #f0f0f0;
+    }
+
+    .card-body { 
+      padding: 1rem; 
+      flex: 1; 
+      display: flex; 
+      flex-direction: column; 
+    }
+    
+    .tag {
+      align-self: flex-start;
+      background: var(--manwil-yellow);
+      color: #63050b;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .title { 
+      font-size: 1.15rem; 
+      color: #111; 
+      margin-bottom: 0.5rem; 
+      font-weight: 800; 
+      line-height: 1.2; 
+    }
+
+    /* Ficha Técnica */
+    .specs-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 0.5rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.78rem;
+      color: #475569;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .specs-box span strong { 
+      color: #1e293b; 
+    }
+
+    .price { 
+      font-size: 1.4rem; 
+      font-weight: 900; 
+      color: var(--manwil-red); 
+      margin-bottom: 0.8rem; 
+      margin-top: auto; 
+    }
+
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .qty-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid #cbd5e1;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .qty-input {
+      width: 44px;
+      height: 32px;
+      text-align: center;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .add-btn {
+      flex: 1;
+      background: var(--manwil-red);
+      color: white;
+      border: none;
+      height: 34px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background 0.2s;
+    }
+    .add-btn:hover { 
+      background: var(--manwil-dark-red); 
+    }
+
+    /* Modal Carrito */
+    .modal-overlay {
+      position: fixed; 
+      inset: 0; 
+      background: rgba(0,0,0,0.65);
+      display: none; 
+      justify-content: flex-end; 
+      z-index: 100;
+      backdrop-filter: blur(3px);
+    }
+    .modal {
+      background: white; 
+      width: 100%; 
+      max-width: 420px; 
+      height: 100%;
+      display: flex; 
+      flex-direction: column; 
+      padding: 1.5rem;
+    }
+    .modal-header {
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      padding-bottom: 0.8rem; 
+      border-bottom: 2px solid #f1f5f9;
+    }
+    .modal-header h2 { 
+      color: var(--manwil-red); 
+      font-weight: 800; 
+      font-size: 1.25rem; 
+    }
+    .close-btn { 
+      background: none; 
+      border: none; 
+      font-size: 1.5rem; 
+      cursor: pointer; 
+      color: #64748b; 
+    }
+
+    .cart-items { 
+      flex: 1; 
+      overflow-y: auto; 
+      margin: 1rem 0; 
+      padding-right: 4px; 
+    }
+    .cart-item {
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      padding: 0.8rem 0; 
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .checkout-form label { 
+      font-size: 0.8rem; 
+      font-weight: 700; 
+      color: #444; 
+    }
+    .checkout-form input, .checkout-form textarea {
+      width: 100%; 
+      padding: 0.6rem; 
+      margin: 0.2rem 0 0.7rem 0;
+      border: 1px solid #cbd5e1; 
+      border-radius: 6px; 
+      font-size: 0.9rem;
+    }
+
+    .btn-whatsapp-order {
+      width: 100%; 
+      background: #25d366; 
+      color: white; 
+      border: none;
+      padding: 0.9rem; 
+      border-radius: 8px; 
+      font-weight: 800; 
+      cursor: pointer;
+      font-size: 1.05rem; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      gap: 8px;
+    }
+    .btn-whatsapp-order:hover { 
+      background: #1eb956; 
+    }
+
+    /* Barra Inferior Fija - Redes Sociales */
+    footer.social-footer {
+      background: #180507;
+      border-top: 3px solid var(--manwil-yellow);
+      padding: 0.8rem 1rem;
+      text-align: center;
+      position: sticky;
+      bottom: 0;
+      z-index: 35;
+      width: 100%;
+    }
+    .social-footer p {
+      color: #f1f5f9;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+    }
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.5rem 1.1rem;
+      border-radius: 25px;
+      color: white;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    }
+    .social-btn:hover { 
+      transform: translateY(-2px); 
+      box-shadow: 0 5px 12px rgba(0,0,0,0.5);
+    }
+    .btn-wa { background: #25d366; }
+    .btn-fb { background: #1877f2; }
+    .btn-tt { background: #000000; border: 1px solid rgba(255,255,255,0.3); }
+
+    .social-icon {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Encabezado con Logo PNG -->
+  <header>
+    <div class="brand-wrap">
+      <!-- ========================================================
+           👉 2. CAMBIA AQUÍ EL ENLACE DIRECTO O ARCHIVO DE TU LOGO
+           ======================================================== -->
+      <img src="logo.png" alt="Logo Manwil" class="brand-logo" onerror="this.style.display='none'">
+      <div class="brand-title">EMBUTIDOS MANWIL</div>
+    </div>
+  </header>
+
+  <!-- Filtro por las 6 Categorías -->
+  <div class="categories-bar">
+    <button class="cat-btn active" onclick="filtrarCategoria('TODOS')">TODOS</button>
+    <button class="cat-btn" onclick="filtrarCategoria('SALCHICHAS')">SALCHICHAS</button>
+    <button class="cat-btn" onclick="filtrarCategoria('CHORIZOS')">CHORIZOS</button>
+    <button class="cat-btn" onclick="filtrarCategoria('MORTADELAS Y JAMONES')">MORTADELAS Y JAMONES</button>
+    <button class="cat-btn" onclick="filtrarCategoria('MORTADELAS Y JAMONES SELLADOS')">MORTADELAS Y JAMONES SELLADOS</button>
+    <button class="cat-btn" onclick="filtrarCategoria('SALAME Y PEPPERONI')">SALAME Y PEPPERONI</button>
+    <button class="cat-btn" onclick="filtrarCategoria('TOCINO Y PASTA DE HIGADO')">TOCINO Y PASTA DE HIGADO</button>
+  </div>
+
+  <!-- Botón Flotante Permanente de Carrito -->
+  <button class="floating-cart-btn" onclick="toggleCarrito()">
+    🛒 Pedido <span class="cart-badge" id="cart-count">0</span>
+  </button>
+
+  <main class="container">
+    <div id="loader">Cargando productos en vivo desde Google Sheets...</div>
+    <div id="grid-productos" class="grid"></div>
+  </main>
+
+  <!-- Ventana Modal Carrito Lateral -->
+  <div id="modal-carrito" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Tu Carrito de Pedido</h2>
+        <button class="close-btn" onclick="toggleCarrito()">✕</button>
+      </div>
+
+      <div id="cart-items" class="cart-items"></div>
+
+      <div style="font-size: 1.25rem; font-weight: 900; margin-bottom: 0.8rem; color: #111;">
+        Total a Pagar: Bs. <span id="cart-total">0.00</span>
+      </div>
+
+      <div class="checkout-form">
+        <label>Nombre Completo *</label>
+        <input type="text" id="cust-name" placeholder="Ej. Juan Pérez" required>
+        
+        <label>Dirección de Envío y Referencias *</label>
+        <textarea id="cust-address" rows="2" placeholder="Zona, calle, número de casa, indicaciones..." required></textarea>
+        
+        <button class="btn-whatsapp-order" onclick="enviarPedidoWhatsApp()">
+          📲 Enviar Pedido a WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pie de Página Fijo con Logos Vectoriales Oficiales -->
+  <footer class="social-footer">
+    <p>Síguenos en nuestras redes sociales</p>
+    <div class="social-links">
+      <!-- WhatsApp -->
+      <a href="https://wa.me/59100000000" target="_blank" class="social-btn btn-wa">
+        <svg viewBox="0 0 24 24" class="social-icon">
+          <path fill="currentColor" d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.14-.25-.02-.39.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1s.9 2.43 1.02 2.6c.13.17 1.77 2.7 4.28 3.79.6.26 1.07.41 1.43.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.11-.23-.18-.48-.3Z"/>
+        </svg>
+        <span>WhatsApp</span>
+      </a>
+
+      <!-- Facebook -->
+      <a href="https://facebook.com/tu-pagina" target="_blank" class="social-btn btn-fb">
+        <svg viewBox="0 0 24 24" class="social-icon">
+          <path fill="currentColor" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+        <span>Facebook</span>
+      </a>
+
+      <!-- TikTok -->
+      <a href="https://tiktok.com/@tu-cuenta" target="_blank" class="social-btn btn-tt">
+        <svg viewBox="0 0 24 24" class="social-icon">
+          <path fill="currentColor" d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.98v7.41c0 2.62-.97 5.25-2.91 7.02-1.99 1.83-4.8 2.66-7.44 2.22-2.64-.43-4.99-2.07-6.28-4.42-1.32-2.4-1.28-5.46.12-7.82 1.4-2.34 3.96-3.88 6.69-3.96.22 0 .43 0 .65.02v4.06c-.84-.11-1.7.07-2.4.52-.72.46-1.23 1.2-1.42 2.03-.2.85-.02 1.76.49 2.46.51.7 1.33 1.14 2.2 1.19.89.05 1.77-.3 2.37-.96.6-.66.86-1.57.86-2.46V.02h.42z"/>
+        </svg>
+        <span>TikTok</span>
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    // ==========================================
+    // CONFIGURACIÓN OBLIGATORIA
+    // ==========================================
+    // 1. Pega aquí el enlace CSV de tu Google Sheet publicado:
+    const URL_SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSx2fPKDpKPeIhYtkcN_9WBWpBazIYxIYbzUn5d8H5DWqbJNH_FB3xpTUlrgvdieA/pubhtml?gid=715856053&single=true';
+
+    // 2. Número de WhatsApp de la tienda (código de país sin '+'):
+    const NUMERO_WHATSAPP = '59165545622';
+    // ==========================================
+
+    let todosLosProductos = [];
+    let categoriaActiva = 'TODOS';
+    let carrito = {};
+
+    async function cargarCatalogo() {
+      try {
+        const res = await fetch(URL_SHEET_CSV);
+        const data = await res.text();
+        
+        const filas = data.split('\n').filter(r => r.trim() !== '');
+        const cabeceras = filas[0].split(',').map(h => h.trim().toLowerCase());
+
+        todosLosProductos = filas.slice(1).map((fila, index) => {
+          const valores = fila.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.replace(/^"|"$/g, '').trim());
+          let item = { id: index + 1 };
+          cabeceras.forEach((col, i) => { item[col] = valores[i] || ''; });
+          return item;
+        });
+
+        document.getElementById('loader').style.display = 'none';
+        renderizar();
+      } catch (err) {
+        document.getElementById('loader').innerHTML = 'Configura tu enlace publicado CSV en la variable <code>URL_SHEET_CSV</code>.';
+      }
+    }
+
+    function filtrarCategoria(categoria) {
+      categoriaActiva = categoria;
+      
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.trim().toUpperCase() === categoria.toUpperCase());
+      });
+
+      renderizar();
+    }
+
+    function renderizar() {
+      const container = document.getElementById('grid-productos');
+      
+      const filtrados = categoriaActiva === 'TODOS' 
+        ? todosLosProductos 
+        : todosLosProductos.filter(p => (p.categoria || '').trim().toUpperCase() === categoriaActiva.toUpperCase());
+
+      if (filtrados.length === 0) {
+        container.innerHTML = '<p style="color:white; text-align:center; grid-column:1/-1;">No hay productos en esta categoría.</p>';
+        return;
+      }
+
+      container.innerHTML = filtrados.map(p => `
+        <div class="card">
+          <img src="${p.foto || 'https://via.placeholder.com/300?text=Embutidos+Manwil'}" alt="${p.nombre}">
+          <div class="card-body">
+            <span class="tag">${p.categoria || 'Manwil'}</span>
+            <h3 class="title">${p.nombre}</h3>
+            
+            <div class="specs-box">
+              <span><strong>Peso:</strong> ${p.peso || 'N/A'}</span>
+              <span><strong>Cantidad:</strong> ${p.cantidad_paquete || 'N/A'}</span>
+              <span><strong>Tamaño:</strong> ${p.tamano || 'N/A'}</span>
+            </div>
+
+            <div class="price">Bs. ${parseFloat(p.precio || 0).toFixed(2)}</div>
+
+            <div class="qty-controls">
+              <button class="qty-btn" onclick="ajustarInputQty(${p.id}, -1)">-</button>
+              <input type="number" id="qty-${p.id}" class="qty-input" value="1" min="1">
+              <button class="qty-btn" onclick="ajustarInputQty(${p.id}, 1)">+</button>
+              <button class="add-btn" onclick="agregarAlCarrito(${p.id})">Agregar</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function ajustarInputQty(id, delta) {
+      const input = document.getElementById(`qty-${id}`);
+      let val = (parseInt(input.value) || 1) + delta;
+      if (val < 1) val = 1;
+      input.value = val;
+    }
+
+    function agregarAlCarrito(id) {
+      const input = document.getElementById(`qty-${id}`);
+      const cantidad = parseInt(input.value) || 1;
+      const prod = todosLosProductos.find(p => p.id === id);
+      if (!prod) return;
+
+      if (!carrito[id]) {
+        carrito[id] = { ...prod, cantidadSeleccionada: 0 };
+      }
+      carrito[id].cantidadSeleccionada += cantidad;
+      input.value = 1;
+      actualizarCarritoUI();
+    }
+
+    function modificarCantidadCarrito(id, delta) {
+      if (carrito[id]) {
+        carrito[id].cantidadSeleccionada += delta;
+        if (carrito[id].cantidadSeleccionada <= 0) delete carrito[id];
+        actualizarCarritoUI();
+      }
+    }
+
+    function actualizarCarritoUI() {
+      const itemsContainer = document.getElementById('cart-items');
+      const countBadge = document.getElementById('cart-count');
+      const totalLabel = document.getElementById('cart-total');
+      
+      let total = 0;
+      let count = 0;
+      let html = '';
+
+      Object.values(carrito).forEach(item => {
+        const subtotal = item.cantidadSeleccionada * parseFloat(item.precio || 0);
+        total += subtotal;
+        count += item.cantidadSeleccionada;
+        html += `
+          <div class="cart-item">
+            <div>
+              <strong>${item.nombre}</strong><br>
+              <small style="color:#555;">${item.peso || ''} | Bs. ${parseFloat(item.precio).toFixed(2)} x ${item.cantidadSeleccionada} = <b>Bs. ${subtotal.toFixed(2)}</b></small>
+            </div>
+            <div>
+              <button class="qty-btn" onclick="modificarCantidadCarrito(${item.id}, -1)">-</button>
+              <button class="qty-btn" onclick="modificarCantidadCarrito(${item.id}, 1)">+</button>
+            </div>
+          </div>
+        `;
+      });
+
+      itemsContainer.innerHTML = html || '<p style="color:#777; text-align:center; padding:1.5rem 0;">Tu carrito está vacío.</p>';
+      countBadge.textContent = count;
+      totalLabel.textContent = total.toFixed(2);
+    }
+
+    function toggleCarrito() {
+      const modal = document.getElementById('modal-carrito');
+      modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function enviarPedidoWhatsApp() {
+      const items = Object.values(carrito);
+      if (items.length === 0) return alert('Debes agregar al menos un producto al carrito.');
+
+      const nombre = document.getElementById('cust-name').value.trim();
+      const direccion = document.getElementById('cust-address').value.trim();
+
+      if (!nombre || !direccion) {
+        return alert('Por favor llena tu nombre y dirección de envío.');
+      }
+
+      let total = 0;
+      let texto = `*NUEVO PEDIDO - EMBUTIDOS MANWIL* 🛒🥩\n\n`;
+      texto += `👤 *Cliente:* ${nombre}\n`;
+      texto += `📍 *Dirección de entrega:* ${direccion}\n\n`;
+      texto += `*DETALLE DE COMPRA:*\n`;
+
+      items.forEach(item => {
+        const subtotal = item.cantidadSeleccionada * parseFloat(item.precio || 0);
+        total += subtotal;
+        texto += `▪ *${item.nombre}* [${item.peso || ''}]\n   ${item.cantidadSeleccionada} unid. x Bs. ${parseFloat(item.precio).toFixed(2)} = Bs. ${subtotal.toFixed(2)}\n`;
+      });
+
+      texto += `\n💰 *TOTAL A PAGAR:* Bs. ${total.toFixed(2)}\n`;
+      texto += `Por favor indíquenme el tiempo estimado de entrega y método de cobro.`;
+
+      const url = `https://wa.me/${59165545622}?text=${encodeURIComponent(texto)}`;
+      window.open(url, '_blank');
+    }
+
+    cargarCatalogo();
+  </script>
+</body>
+</html>
