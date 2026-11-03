@@ -72,7 +72,7 @@
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
 
-    /* Barra de Categorías Transparente (Sin franja blanca) */
+    /* Barra de Categorías Transparente */
     .categories-bar {
       background: transparent;
       padding: 0.9rem 1rem 0.5rem 1rem;
@@ -476,7 +476,7 @@
         <textarea id="cust-address" rows="2" placeholder="Zona, calle, número de casa, indicaciones..." required></textarea>
         
         <button class="btn-whatsapp-order" onclick="enviarPedidoWhatsApp()">
-          📲 Enviar Pedido a WhatsApp
+          Enviar Pedido a WhatsApp
         </button>
       </div>
     </div>
@@ -517,10 +517,10 @@
     // CONFIGURACIÓN OBLIGATORIA
     // ==========================================
     // 1. Pega aquí el enlace CSV de tu Google Sheet publicado:
-    const URL_SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSx2fPKDpKPeIhYtkcN_9WBWpBazIYxIYbzUn5d8H5DWqbJNH_FB3xpTUlrgvdieA/pubhtml?gid=715856053&single=true';
+    const URL_SHEET_CSV = 'PEGA_AQUI_TU_ENLACE_CSV_DE_GOOGLE_SHEETS';
 
     // 2. Número de WhatsApp de la tienda (código de país sin '+'):
-    const NUMERO_WHATSAPP = '59165545622';
+    const NUMERO_WHATSAPP = '59100000000';
     // ==========================================
 
     let todosLosProductos = [];
@@ -571,30 +571,40 @@
         return;
       }
 
-      container.innerHTML = filtrados.map(p => `
-        <div class="card">
-          <img src="${p.foto || 'https://via.placeholder.com/300?text=Embutidos+Manwil'}" alt="${p.nombre}">
-          <div class="card-body">
-            <span class="tag">${p.categoria || 'Manwil'}</span>
-            <h3 class="title">${p.nombre}</h3>
-            
-            <div class="specs-box">
-              <span><strong>Peso:</strong> ${p.peso || 'N/A'}</span>
-              <span><strong>Cantidad:</strong> ${p.cantidad_paquete || 'N/A'}</span>
-              <span><strong>Tamaño:</strong> ${p.tamano || 'N/A'}</span>
-            </div>
+      container.innerHTML = filtrados.map(p => {
+        const nombre = p.nombre || p.NOMBRE || 'Producto';
+        const peso = p.peso || p.PESO || 'N/A';
+        const cantidadPaq = p.cantidad_paquete || p.CANTIDAD_PAQUETE || p.cantidad || 'N/A';
+        const tamano = p.tamano || p.TAMANO || p.tamaño || 'N/A';
+        const precio = parseFloat(p.precio || p.PRECIO || 0) || 0;
+        const foto = p.foto || p.FOTO || 'https://via.placeholder.com/300?text=Embutidos+Manwil';
+        const categoria = p.categoria || p.CATEGORIA || 'Manwil';
 
-            <div class="price">Bs. ${parseFloat(p.precio || 0).toFixed(2)}</div>
+        return `
+          <div class="card">
+            <img src="${foto}" alt="${nombre}">
+            <div class="card-body">
+              <span class="tag">${categoria}</span>
+              <h3 class="title">${nombre}</h3>
+              
+              <div class="specs-box">
+                <span><strong>Peso:</strong> ${peso}</span>
+                <span><strong>Cantidad:</strong> ${cantidadPaq}</span>
+                <span><strong>Tamaño:</strong> ${tamano}</span>
+              </div>
 
-            <div class="qty-controls">
-              <button class="qty-btn" onclick="ajustarInputQty(${p.id}, -1)">-</button>
-              <input type="number" id="qty-${p.id}" class="qty-input" value="1" min="1">
-              <button class="qty-btn" onclick="ajustarInputQty(${p.id}, 1)">+</button>
-              <button class="add-btn" onclick="agregarAlCarrito(${p.id})">Agregar</button>
+              <div class="price">Bs. ${precio.toFixed(2)}</div>
+
+              <div class="qty-controls">
+                <button class="qty-btn" onclick="ajustarInputQty(${p.id}, -1)">-</button>
+                <input type="number" id="qty-${p.id}" class="qty-input" value="1" min="1">
+                <button class="qty-btn" onclick="ajustarInputQty(${p.id}, 1)">+</button>
+                <button class="add-btn" onclick="agregarAlCarrito(${p.id})">Agregar</button>
+              </div>
             </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function ajustarInputQty(id, delta) {
@@ -636,14 +646,18 @@
       let html = '';
 
       Object.values(carrito).forEach(item => {
-        const subtotal = item.cantidadSeleccionada * parseFloat(item.precio || 0);
+        const nombre = item.nombre || item.NOMBRE || 'Producto';
+        const peso = item.peso || item.PESO || '';
+        const precio = parseFloat(item.precio || item.PRECIO || 0) || 0;
+        const subtotal = item.cantidadSeleccionada * precio;
+
         total += subtotal;
         count += item.cantidadSeleccionada;
         html += `
           <div class="cart-item">
             <div>
-              <strong>${item.nombre}</strong><br>
-              <small style="color:#555;">${item.peso || ''} | Bs. ${parseFloat(item.precio).toFixed(2)} x ${item.cantidadSeleccionada} = <b>Bs. ${subtotal.toFixed(2)}</b></small>
+              <strong>${nombre}</strong><br>
+              <small style="color:#555;">${peso} | Bs. ${precio.toFixed(2)} x ${item.cantidadSeleccionada} = <b>Bs. ${subtotal.toFixed(2)}</b></small>
             </div>
             <div>
               <button class="qty-btn" onclick="modificarCantidadCarrito(${item.id}, -1)">-</button>
@@ -671,25 +685,32 @@
       const direccion = document.getElementById('cust-address').value.trim();
 
       if (!nombre || !direccion) {
-        return alert('Por favor llena tu nombre y dirección de envío.');
+        return alert('Por favor llena tu nombre y direccion de envio.');
       }
 
       let total = 0;
-      let texto = `*NUEVO PEDIDO - EMBUTIDOS MANWIL* 🛒🥩\n\n`;
-      texto += `👤 *Cliente:* ${nombre}\n`;
-      texto += `📍 *Dirección de entrega:* ${direccion}\n\n`;
-      texto += `*DETALLE DE COMPRA:*\n`;
+      let texto = "*NUEVO PEDIDO - EMBUTIDOS MANWIL*\n\n";
+      texto += "*Cliente:* " + nombre + "\n";
+      texto += "*Direccion de entrega:* " + direccion + "\n\n";
+      texto += "*DETALLE DE COMPRA:*\n";
 
       items.forEach(item => {
-        const subtotal = item.cantidadSeleccionada * parseFloat(item.precio || 0);
+        const nombreProd = item.nombre || item.NOMBRE || item.Nombre || "Producto";
+        const pesoProd = item.peso || item.PESO || item.Peso || "";
+        const precioUnit = parseFloat(item.precio || item.PRECIO || item.Precio || 0) || 0;
+        const subtotal = item.cantidadSeleccionada * precioUnit;
+        
         total += subtotal;
-        texto += `▪ *${item.nombre}* [${item.peso || ''}]\n   ${item.cantidadSeleccionada} unid. x Bs. ${parseFloat(item.precio).toFixed(2)} = Bs. ${subtotal.toFixed(2)}\n`;
+        
+        texto += "- *" + nombreProd + "*";
+        if (pesoProd) texto += " [" + pesoProd + "]";
+        texto += "\n   " + item.cantidadSeleccionada + " unid. x Bs. " + precioUnit.toFixed(2) + " = Bs. " + subtotal.toFixed(2) + "\n";
       });
 
-      texto += `\n💰 *TOTAL A PAGAR:* Bs. ${total.toFixed(2)}\n`;
-      texto += `Por favor indíquenme el tiempo estimado de entrega y método de cobro.`;
+      texto += "\n*TOTAL A PAGAR:* Bs. " + total.toFixed(2) + "\n";
+      texto += "Por favor indiquenme el tiempo estimado de entrega.";
 
-      const url = `https://wa.me/${59165545622}?text=${encodeURIComponent(texto)}`;
+      const url = "https://wa.me/" + NUMERO_WHATSAPP + "?text=" + encodeURIComponent(texto);
       window.open(url, '_blank');
     }
 
