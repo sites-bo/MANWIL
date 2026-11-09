@@ -5,13 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Catálogo Virtual - Embutidos Manwil</title>
   <style>
+    /* ========================================================
+       🎨 SECCIÓN: COLORES PRINCIPALES Y FONDOS
+       Aquí puedes cambiar los colores de toda tu página.
+       ======================================================== */
     :root {
-      --manwil-red: #d91424;
-      --manwil-dark-red: #9e0c19;
-      --manwil-yellow: #fdbb11;
-      --card-bg: rgba(255, 255, 255, 0.97);
-      --text-dark: #222222;
-      --wood-url: url('https://images.unsplash.com/photo-1546484396-fb3fc6f95f98?q=80&w=1200&auto=format&fit=crop');
+      --manwil-red: #d91424; /* Rojo principal */
+      --manwil-dark-red: #9e0c19; /* Rojo oscuro (al pasar el ratón) */
+      --manwil-yellow: #fdbb11; /* Amarillo de los bordes y etiquetas */
+      --card-bg: rgba(255, 255, 255, 0.97); /* Fondo de las tarjetas de producto (blanco) */
+      --text-dark: #222222; /* Color del texto general */
+      --wood-url: url('https://images.unsplash.com/photo-1546484396-fb3fc6f95f98?q=80&w=1200&auto=format&fit=crop'); /* Imagen de fondo de madera */
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -28,6 +32,10 @@
       flex-direction: column;
     }
 
+    /* ========================================================
+       🏷️ SECCIÓN: CABECERA Y LOGO (PARTE SUPERIOR)
+       Diseño de la barra roja de arriba.
+       ======================================================== */
     header {
       background: linear-gradient(180deg, var(--manwil-red) 0%, var(--manwil-dark-red) 100%);
       border-bottom: 4px solid var(--manwil-yellow);
@@ -49,6 +57,10 @@
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
 
+    /* ========================================================
+       📂 SECCIÓN: BARRA DE CATEGORÍAS (BOTONES DE FILTRO)
+       Estilos de los botones para cambiar de categoría.
+       ======================================================== */
     .categories-bar {
       background: transparent; padding: 0.9rem 1rem 0.5rem 1rem;
       position: sticky; top: 68px; z-index: 30;
@@ -62,6 +74,10 @@
     }
     .cat-btn.active, .cat-btn:hover { background: var(--manwil-red); color: #ffffff; border-color: #ffffff; transform: scale(1.04); }
 
+    /* ========================================================
+       🛒 SECCIÓN: BOTÓN FLOTANTE DEL CARRITO
+       Diseño del botón inferior derecho.
+       ======================================================== */
     .floating-cart-btn {
       position: fixed; bottom: 85px; right: 20px; z-index: 90;
       background: var(--manwil-yellow); color: #7a0c14; border: 3px solid white;
@@ -71,31 +87,39 @@
     .floating-cart-btn:hover { transform: scale(1.08); }
     .cart-badge { background: var(--manwil-red); color: white; border-radius: 50%; padding: 2px 7px; font-size: 0.85rem; }
 
+    /* ========================================================
+       📦 SECCIÓN: TARJETAS DE PRODUCTO
+       Diseño visual de cada producto (foto, título, precio).
+       ======================================================== */
     .container { max-width: 1200px; margin: 1rem auto; padding: 0 1rem; flex: 1; width: 100%; }
     #loader { background: rgba(255, 255, 255, 0.92); padding: 2rem; border-radius: 12px; text-align: center; font-weight: bold; color: var(--manwil-dark-red); max-width: 450px; margin: 3rem auto; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
 
     .card { background: var(--card-bg); border-radius: 14px; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.7); display: flex; flex-direction: column; transition: transform 0.2s ease; }
     .card:hover { transform: translateY(-4px); }
-    .card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; background: #f0f0f0; }
+    .card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; background: #f0f0f0; } /* Foto cuadrada */
     .card-body { padding: 1rem; flex: 1; display: flex; flex-direction: column; }
     
     .tag { align-self: flex-start; background: var(--manwil-yellow); color: #63050b; font-size: 0.68rem; font-weight: 800; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; margin-bottom: 0.5rem; }
     .title { font-size: 1.15rem; color: #111; margin-bottom: 0.5rem; font-weight: 800; line-height: 1.2; }
     
-    .specs-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.5rem; margin-bottom: 0.8rem; font-size: 0.78rem; color: #475569; display: flex; flex-direction: column; gap: 3px; }
+    .specs-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.5rem; margin-bottom: 0.8rem; font-size: 0.95rem; color: #475569; display: flex; flex-direction: column; gap: 3px; }
     .specs-box span strong { color: #1e293b; }
     
     .price { font-size: 1.4rem; font-weight: 900; color: var(--manwil-red); margin-bottom: 0.2rem; margin-top: auto; }
-    
     .precio-etiqueta-label { font-size: 0.8rem; color: #555; font-weight: bold; margin-bottom: 0.8rem; text-transform: uppercase; }
 
+    /* Botones de + y - y Agregar */
     .qty-controls { display: flex; align-items: center; gap: 0.4rem; }
     .qty-btn { width: 32px; height: 32px; border: 1px solid #cbd5e1; background: white; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1rem; }
     .qty-input { width: 44px; height: 32px; text-align: center; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: bold; }
     .add-btn { flex: 1; background: var(--manwil-red); color: white; border: none; height: 34px; border-radius: 6px; cursor: pointer; font-weight: 700; transition: background 0.2s; }
     .add-btn:hover { background: var(--manwil-dark-red); }
 
+    /* ========================================================
+       📝 SECCIÓN: MODAL / VENTANA DEL CARRITO LATERAL
+       Diseño de la ventana que se abre para finalizar el pedido.
+       ======================================================== */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: none; justify-content: flex-end; z-index: 100; backdrop-filter: blur(3px); }
     .modal { background: white; width: 100%; max-width: 420px; height: 100%; display: flex; flex-direction: column; padding: 1.5rem; }
     .modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.8rem; border-bottom: 2px solid #f1f5f9; }
@@ -109,6 +133,9 @@
     .btn-whatsapp-order { width: 100%; background: #25d366; color: white; border: none; padding: 0.9rem; border-radius: 8px; font-weight: 800; cursor: pointer; font-size: 1.05rem; display: flex; justify-content: center; align-items: center; gap: 8px; }
     .btn-whatsapp-order:hover { background: #1eb956; }
 
+    /* ========================================================
+       🌐 SECCIÓN: PIE DE PÁGINA (REDES SOCIALES)
+       ======================================================== */
     footer.social-footer { background: #180507; border-top: 3px solid var(--manwil-yellow); padding: 0.8rem 1rem; text-align: center; position: sticky; bottom: 0; z-index: 35; width: 100%; }
     .social-footer p { color: #f1f5f9; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
     .social-links { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
@@ -119,6 +146,10 @@
   </style>
 </head>
 <body>
+  <!-- ========================================================
+       BARRA SUPERIOR (HEADER)
+       Contiene tu logo y el título principal.
+       ======================================================== -->
   <header>
     <div class="brand-wrap">
       <img src="https://raw.githubusercontent.com/sites-bo/MANWIL/refs/heads/main/images/logomanwil.png" alt="Logo Manwil" class="brand-logo" onerror="this.style.display='none'">
@@ -126,6 +157,11 @@
     </div>
   </header>
 
+  <!-- ========================================================
+       BOTONES DE CATEGORÍAS
+       Si agregas una categoría nueva en el Excel, debes añadir
+       el botón correspondiente aquí abajo.
+       ======================================================== -->
   <div class="categories-bar">
     <button class="cat-btn active" onclick="filtrarCategoria('TODOS')">TODOS</button>
     <button class="cat-btn" onclick="filtrarCategoria('SALCHICHAS')">SALCHICHAS</button>
@@ -136,15 +172,23 @@
     <button class="cat-btn" onclick="filtrarCategoria('TOCINO Y PASTA DE HIGADO')">TOCINO Y PASTA DE HIGADO</button>
   </div>
 
+  <!-- Botón flotante para abrir el carrito -->
   <button class="floating-cart-btn" onclick="toggleCarrito()">
     🛒 Pedido <span class="cart-badge" id="cart-count">0</span>
   </button>
 
+  <!-- ========================================================
+       CONTENEDOR DE PRODUCTOS
+       Aquí es donde JavaScript inyectará las tarjetas.
+       ======================================================== -->
   <main class="container">
     <div id="loader">Cargando productos...</div>
     <div id="grid-productos" class="grid"></div>
   </main>
 
+  <!-- ========================================================
+       VENTANA MODAL DEL CARRITO (OCULTA POR DEFECTO)
+       ======================================================== -->
   <div id="modal-carrito" class="modal-overlay">
     <div class="modal">
       <div class="modal-header">
@@ -155,11 +199,13 @@
       <div style="font-size: 1.25rem; font-weight: 900; margin-bottom: 0.8rem; color: #111;">
         Total a Pagar: Bs. <span id="cart-total">0.00</span>
       </div>
+      <!-- Formulario para el cliente -->
       <div class="checkout-form">
         <label>Nombre Completo *</label>
         <input type="text" id="cust-name" placeholder="Ej. Juan Pérez" required>
         <label>Dirección de Envío y Referencias *</label>
         <textarea id="cust-address" rows="2" placeholder="Zona, calle, número de casa, indicaciones..." required></textarea>
+        
         <button class="btn-whatsapp-order" onclick="enviarPedidoWhatsApp()">
           Enviar Pedido a WhatsApp
         </button>
@@ -167,6 +213,7 @@
     </div>
   </div>
 
+  <!-- Redes Sociales -->
   <footer class="social-footer">
     <p>Síguenos en nuestras redes sociales</p>
     <div class="social-links">
@@ -185,14 +232,22 @@
     </div>
   </footer>
 
+  <!-- ========================================================
+       ⚙️ LÓGICA DE PROGRAMACIÓN (JAVASCRIPT)
+       Aquí es donde ocurre toda la "magia" para leer el Excel,
+       filtrar productos y sumar al carrito.
+       ======================================================== -->
   <script>
+    // Variables de conexión
     const URL_SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSx2fPKDpKPeIhYtkcN_9WBWpBazIYxIYbzUn5d8H5DWqbJNH_FB3xpTUlrgvdieA/pub?gid=715856053&single=true&output=csv';
     const NUMERO_WHATSAPP = '59165545622';
 
+    // Memoria del programa
     let todosLosProductos = [];
     let categoriaActiva = 'TODOS';
-    let carrito = {};
+    let carrito = {}; // Almacena lo que el cliente va pidiendo
 
+    // 1️⃣ FUNCIÓN: Carga los datos desde Google Sheets
     async function cargarCatalogo() {
       try {
         const res = await fetch(URL_SHEET_CSV);
@@ -208,12 +263,13 @@
         });
 
         document.getElementById('loader').style.display = 'none';
-        renderizar();
+        renderizar(); // Muestra los productos en pantalla
       } catch (err) {
-        document.getElementById('loader').innerHTML = 'Configura tu enlace publicado CSV en la variable <code>URL_SHEET_CSV</code>.';
+        document.getElementById('loader').innerHTML = 'Error al cargar el catálogo.';
       }
     }
 
+    // 2️⃣ FUNCIÓN: Filtra los productos al hacer clic en los botones superiores
     function filtrarCategoria(categoria) {
       categoriaActiva = categoria;
       document.querySelectorAll('.cat-btn').forEach(btn => {
@@ -222,6 +278,7 @@
       renderizar();
     }
 
+    // 3️⃣ FUNCIÓN: Dibuja (crea el diseño HTML) de las tarjetas de productos
     function renderizar() {
       const container = document.getElementById('grid-productos');
       const filtrados = categoriaActiva === 'TODOS' 
@@ -242,13 +299,13 @@
         const foto = p.foto || p.FOTO || 'https://via.placeholder.com/300?text=Embutidos+Manwil';
         const categoria = p.categoria || p.CATEGORIA || 'Manwil';
         
-        // Lee directamente cualquier texto de la columna ETIQUETA_PRECIO
         const etiquetaPrecio = (p.etiqueta_precio || p.ETIQUETA_PRECIO || '').toString().trim();
         let etiquetaHTML = '';
         if (etiquetaPrecio !== '') {
            etiquetaHTML = `<div class="precio-etiqueta-label">${etiquetaPrecio}</div>`;
         }
 
+        // Fíjate que el value="0" e input min="0" definen que empieza en Cero.
         return `
           <div class="card">
             <img src="${foto}" alt="${nombre}">
@@ -264,7 +321,7 @@
               ${etiquetaHTML}
               <div class="qty-controls">
                 <button class="qty-btn" onclick="ajustarInputQty(${p.id}, -1)">-</button>
-                <input type="number" id="qty-${p.id}" class="qty-input" value="1" min="1">
+                <input type="number" id="qty-${p.id}" class="qty-input" value="0" min="0">
                 <button class="qty-btn" onclick="ajustarInputQty(${p.id}, 1)">+</button>
                 <button class="add-btn" onclick="agregarAlCarrito(${p.id})">Agregar</button>
               </div>
@@ -274,35 +331,71 @@
       }).join('');
     }
 
+    // 4️⃣ FUNCIÓN CORREGIDA: Sube o baja el número de la cajita (evitando errores y negativos)
     function ajustarInputQty(id, delta) {
       const input = document.getElementById(`qty-${id}`);
-      let val = (parseInt(input.value) || 1) + delta;
-      if (val < 1) val = 1;
-      input.value = val;
+      let val = parseInt(input.value); // Leemos el número actual
+      
+      // Si por error borran el número y el campo queda vacío, lo tratamos como 0
+      if (isNaN(val)) {
+        val = 0;
+      }
+      
+      val += delta; // Sumamos (+1) o restamos (-1)
+      
+      // Bloqueamos para que no baje de 0
+      if (val < 0) {
+        val = 0;
+      }
+      
+      input.value = val; // Actualizamos la cajita visualmente
     }
 
+    // 5️⃣ FUNCIÓN CORREGIDA: Envía el producto y la cantidad al carrito
     function agregarAlCarrito(id) {
       const input = document.getElementById(`qty-${id}`);
-      const cantidad = parseInt(input.value) || 1;
+      const cantidad = parseInt(input.value);
+      
+      // Si la cantidad es cero (o no es un número), bloqueamos y avisamos al usuario
+      if (isNaN(cantidad) || cantidad <= 0) {
+        alert("Por favor, aumenta la cantidad con el botón '+' antes de agregarlo al pedido.");
+        return; 
+      }
+
       const prod = todosLosProductos.find(p => p.id === id);
       if (!prod) return;
 
+      // Si el producto no estaba en el carrito, lo agregamos empezando desde cero
       if (!carrito[id]) {
         carrito[id] = { ...prod, cantidadSeleccionada: 0 };
       }
+      
+      // Sumamos la cantidad que el cliente escogió a lo que ya tenía en el carrito
       carrito[id].cantidadSeleccionada += cantidad;
-      input.value = 1;
+      
+      // Regresamos la cajita de texto a 0 para el próximo uso
+      input.value = 0;
+      
+      // Actualizamos la ventana flotante del carrito
       actualizarCarritoUI();
+      
+      // Pequeño aviso de éxito visual
+      alert("✅ Producto agregado correctamente a tu carrito.");
     }
 
+    // 6️⃣ FUNCIÓN: Suma/Resta las cantidades pero desde dentro de la ventana del carrito
     function modificarCantidadCarrito(id, delta) {
       if (carrito[id]) {
         carrito[id].cantidadSeleccionada += delta;
-        if (carrito[id].cantidadSeleccionada <= 0) delete carrito[id];
+        // Si baja a 0, borramos el producto del carrito
+        if (carrito[id].cantidadSeleccionada <= 0) {
+            delete carrito[id];
+        }
         actualizarCarritoUI();
       }
     }
 
+    // 7️⃣ FUNCIÓN: Dibuja y calcula los totales de la ventana del carrito de compras
     function actualizarCarritoUI() {
       const itemsContainer = document.getElementById('cart-items');
       const countBadge = document.getElementById('cart-count');
@@ -334,21 +427,27 @@
       });
 
       itemsContainer.innerHTML = html || '<p style="color:#777; text-align:center; padding:1.5rem 0;">Tu carrito está vacío.</p>';
-      countBadge.textContent = count;
-      totalLabel.textContent = total.toFixed(2);
+      countBadge.textContent = count; // Actualiza la burbuja con el # total
+      totalLabel.textContent = total.toFixed(2); // Actualiza el precio final
     }
 
+    // 8️⃣ FUNCIÓN: Abre y Cierra la ventana negra del carrito
     function toggleCarrito() {
       const modal = document.getElementById('modal-carrito');
       modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
     }
 
+    // 9️⃣ FUNCIÓN: Arma el mensaje de texto final y lo envía a WhatsApp
     function enviarPedidoWhatsApp() {
       const items = Object.values(carrito);
+      
+      // Si el carrito está vacío, detenemos la acción
       if (items.length === 0) return alert('Debes agregar al menos un producto al carrito.');
 
       const nombre = document.getElementById('cust-name').value.trim();
       const direccion = document.getElementById('cust-address').value.trim();
+      
+      // Si no llenaron sus datos personales, se lo pedimos
       if (!nombre || !direccion) return alert('Por favor llena tu nombre y direccion de envio.');
 
       let total = 0;
@@ -357,6 +456,7 @@
       texto += "*Direccion de entrega:* " + direccion + "\n\n";
       texto += "*DETALLE DE COMPRA:*\n";
 
+      // Leemos todo lo del carrito y lo transformamos en texto
       items.forEach(item => {
         const nombreProd = item.nombre || item.NOMBRE || "Producto";
         const pesoProd = item.peso || item.PESO || "";
@@ -372,10 +472,12 @@
       texto += "\n*TOTAL A PAGAR:* Bs. " + total.toFixed(2) + "\n";
       texto += "Por favor indiquenme el tiempo estimado de entrega.";
 
+      // Redirige al cliente a WhatsApp Web / App
       const url = "https://wa.me/" + NUMERO_WHATSAPP + "?text=" + encodeURIComponent(texto);
       window.open(url, '_blank');
     }
 
+    // ARRANQUE: Ejecuta la carga del catálogo apenas se abre la página
     cargarCatalogo();
   </script>
 </body>
